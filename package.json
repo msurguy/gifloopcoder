@@ -1,6 +1,6 @@
 {
   "name": "gifloopcoder",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Animation Library for creating GIF-like loops",
   "main": "main.js",
   "dependencies": {},
