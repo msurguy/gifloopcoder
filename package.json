@@ -1,6 +1,6 @@
 {
   "name": "gifloopcoder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Animation Library for creating GIF-like loops",
   "main": "main.js",
   "dependencies": {},
@@ -21,10 +21,9 @@
     "gifloopcoder",
     "gif"
   ],
-  "repository" :
-  {
-    "type" : "git",
-    "url" : "https://github.com/msurguy/gifloopcoder.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/msurguy/gifloopcoder.git"
   },
   "author": "Keith Peters, Maks Surguy",
   "license": "MIT"
