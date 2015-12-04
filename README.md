@@ -11,7 +11,15 @@ GLC lirary can be used to create animations like these:
 ## Installation
 This is a standalone version of Keith Peters' [GifLoopCoder](http://www.gifloopcoder.com/) library.
 
-Installation is easy with NPM:
+You can either download the library with NPM or use a free CDN:
+
+### Using a CDN:
+
+```html
+<script src="https://cdn.rawgit.com/msurguy/gifloopcoder/0.0.1/dist/glc.min.js"></script>
+```
+
+### Installation with NPM:
 
 `npm install -s gifloopcoder`
 
@@ -19,7 +27,7 @@ or you can download this repo and get the `glc.min.js` file in "/dist" folder
 
 ## Usage
 
-You can use the GLC library as follows: create an element that will contain the animation canvas, for example a `<div id='sketch'></div>` and place it in your HTML page. Then initialize a new GLC object, passing that canvas container that you created earlier. That's it. You can now use GLC as you would use `onGLC` function in Keith Peters' GLC tool:
+When you have the GLC library on the page you can use it as follows: create an element that will contain the animation canvas, for example a `<div id='sketch'></div>` and place it in your HTML page. Then initialize a new GLC object, passing that canvas container that you created earlier. That's it. You can now use GLC as you would use `onGLC` function in Keith Peters' GLC tool:
 
 ```html
 <div id="sketch"></div>
