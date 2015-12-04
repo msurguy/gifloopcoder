@@ -9,7 +9,7 @@ GLC lirary can be used to create animations like these:
 ![From GifLoopCoder's Tumblr](http://45.media.tumblr.com/4a0b2c4d4f7a6436799e4bd827598c30/tumblr_nyprotgWwe1tjryj4o1_400.gif)
 
 ## Installation
-This is a standalone version of Keith Peters' [GifLoopCoder](http://www.gifloopcoder.com/) library.
+This is a standalone version of Keith Peters' [GifLoopCoder](http://www.gifloopcoder.com/) library to be used on your websites. It does not include the GIF export functionality but rather allows you to drop the library on [Codepen](http://codepen.io/msurguy/pen/WrNxdN), JSFiddle, or any other website to quickly prototype your animations that can be then exported from original GLC tool.
 
 You can either download the library with NPM or use a free CDN:
 
