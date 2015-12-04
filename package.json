@@ -1,0 +1,31 @@
+{
+  "name": "glc",
+  "version": "0.0.1",
+  "description": "Animation Library for creating GIF-like loops",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^12.0.1",
+    "uglify-js": "^2.6.1",
+    "watchify": "^3.6.1"
+  },
+  "scripts": {
+    "build-debug": "browserify main.js -d --s GLC > dist/glc.js",
+    "build-min": "browserify main.js --s GLC | uglifyjs -c > dist/glc.min.js",
+    "build": "npm run build-debug && npm run build-min",
+    "watch": "watchify main.js -d --s GLC -o dist/glc.js -v"
+  },
+  "keywords": [
+    "glc",
+    "animation",
+    "gifloopcoder",
+    "gif"
+  ],
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "https://github.com/msurguy/gifloopcoder.git"
+  },
+  "author": "Keith Peters, Maks Surguy",
+  "license": "MIT"
+}
