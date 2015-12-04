@@ -28,7 +28,6 @@ module.exports = function(canvasWrapper, renderCallback, completeCallback){
   for (var key in shapeList) {
     if (shapeList.hasOwnProperty(key)) {
       var shapeName = key;
-      console.log(shapeName);
       renderList['add' + shapeName[0].toUpperCase() + shapeName.slice(1)] = (function(shapeName, shapeList){
         return function(props){
           renderList.addShape(shapeList[shapeName], props);
