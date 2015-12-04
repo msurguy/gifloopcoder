@@ -1,5 +1,5 @@
 {
-  "name": "glc",
+  "name": "gifloopcoder",
   "version": "0.0.1",
   "description": "Animation Library for creating GIF-like loops",
   "main": "main.js",
