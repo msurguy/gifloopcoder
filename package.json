@@ -3,6 +3,7 @@
   "version": "0.0.3",
   "description": "Animation Library for creating GIF-like loops",
   "main": "main.js",
+  "unpkg": "dist/glc.min.js",
   "dependencies": {},
   "devDependencies": {
     "browserify": "^12.0.1",
