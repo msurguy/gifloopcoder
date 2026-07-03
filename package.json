@@ -1,31 +1,24 @@
 {
-  "name": "gifloopcoder",
-  "version": "0.0.3",
-  "description": "Animation Library for creating GIF-like loops",
-  "main": "main.js",
-  "unpkg": "dist/glc.min.js",
-  "dependencies": {},
-  "devDependencies": {
-    "browserify": "^12.0.1",
-    "uglify-js": "^2.6.1",
-    "watchify": "^3.6.1"
-  },
-  "scripts": {
-    "build-debug": "browserify main.js -d --s GLC > dist/glc.js",
-    "build-min": "browserify main.js --s GLC | uglifyjs -c > dist/glc.min.js",
-    "build": "npm run build-debug && npm run build-min",
-    "watch": "watchify main.js -d --s GLC -o dist/glc.js -v"
-  },
-  "keywords": [
-    "glc",
-    "animation",
-    "gifloopcoder",
-    "gif"
+  "name": "gifloopcoder-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "GIF Loop Coder — modernized animation library, browser playground, and docs",
+  "license": "MIT",
+  "author": "Keith Peters, Maks Surguy",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
   ],
+  "scripts": {
+    "build": "npm run build -w gifloopcoder && npm run build -w playground",
+    "test": "npm run test -w gifloopcoder",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "dev": "npm run dev -w playground",
+    "e2e": "npm run e2e -w playground"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/msurguy/gifloopcoder.git"
-  },
-  "author": "Keith Peters, Maks Surguy",
-  "license": "MIT"
+  }
 }

@@ -1,0 +1,47 @@
+{
+  "name": "gifloopcoder",
+  "version": "1.0.0",
+  "description": "GIF Loop Coder — a JavaScript library for making looping animated GIFs (and WebM/MP4) from code",
+  "license": "MIT",
+  "author": "Keith Peters, Maks Surguy",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "client-zip": "2.5.0",
+    "gifenc": "1.0.3",
+    "mediabunny": "1.50.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.9"
+  },
+  "keywords": [
+    "glc",
+    "animation",
+    "gifloopcoder",
+    "gif",
+    "webm",
+    "mp4",
+    "canvas"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/msurguy/gifloopcoder.git"
+  }
+}

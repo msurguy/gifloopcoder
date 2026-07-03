@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["vite/client"],
+    "paths": {
+      "gifloopcoder": ["../../packages/glc/src/index.ts"]
+    }
+  },
+  "include": [
+    "src",
+    "vite.config.ts",
+    "vite.sandbox.config.ts",
+    "e2e",
+    "playwright.config.ts",
+    "../../packages/glc/src/gifenc.d.ts"
+  ]
+}

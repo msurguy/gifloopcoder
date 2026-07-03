@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GLC Sandbox</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        background: transparent;
+        overflow: hidden;
+      }
+      #stage canvas {
+        display: block;
+        max-width: 100%;
+        max-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <script src="./sandbox.iife.js"></script>
+  </body>
+</html>
