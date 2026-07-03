@@ -36,7 +36,13 @@ test.describe('playground', () => {
     await page.getByRole('button', { name: 'Examples' }).click();
     const cards = page.getByRole('dialog').locator('[aria-label^="Load example:"]');
     await expect(cards).toHaveCount(20);
-    await page.getByLabel('Load example: Gears').click();
+    // ClickableCard's aria button is a hidden overlay; click the card surface
+    // like a user would.
+    await page
+      .getByRole('dialog')
+      .locator('.astryx-clickable-card', { hasText: 'Gears' })
+      .first()
+      .click();
     await expect(page.getByRole('dialog')).toBeHidden();
     await expect(page).toHaveURL(/#\/example\/gears/);
     await waitForCanvas(page);
@@ -86,7 +92,7 @@ test.describe('playground', () => {
   test('docs pages render with sidebar navigation', async ({ page }) => {
     await page.goto('./#/docs/intro');
     await expect(page.getByTestId('docs-content')).toContainText(/GIF Loop Coder/i, { timeout: 15_000 });
-    await page.getByRole('link', { name: 'Objects' }).click();
+    await page.getByRole('navigation').getByRole('link', { name: 'Objects' }).click();
     await expect(page.getByTestId('docs-content')).toContainText(/addCircle|Circle/i);
   });
 });
