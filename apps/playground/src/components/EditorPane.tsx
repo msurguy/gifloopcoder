@@ -8,6 +8,8 @@ import { keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { javascript, javascriptLanguage } from '@codemirror/lang-javascript';
 import { completeFromList, type Completion } from '@codemirror/autocomplete';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 
 const GLC_COMPLETIONS: Completion[] = [
   // glc instance API
@@ -80,6 +82,24 @@ const GLC_COMPLETIONS: Completion[] = [
   ].map((label) => ({ label, type: 'property' as const })),
 ];
 
+// Token colors driven by Astryx's --color-syntax-* tokens, which already
+// resolve per light/dark mode, so highlighting stays legible in both.
+const syntaxHighlightStyle = HighlightStyle.define([
+  { tag: tags.keyword, color: 'var(--color-syntax-keyword)' },
+  { tag: [tags.string, tags.special(tags.string), tags.regexp], color: 'var(--color-syntax-string)' },
+  { tag: tags.comment, color: 'var(--color-syntax-comment)', fontStyle: 'italic' },
+  { tag: tags.number, color: 'var(--color-syntax-number)' },
+  { tag: [tags.bool, tags.null, tags.atom], color: 'var(--color-syntax-constant)' },
+  { tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: 'var(--color-syntax-function)' },
+  { tag: [tags.typeName, tags.className], color: 'var(--color-syntax-type)' },
+  { tag: tags.variableName, color: 'var(--color-syntax-variable)' },
+  { tag: tags.operator, color: 'var(--color-syntax-operator)' },
+  { tag: tags.propertyName, color: 'var(--color-syntax-property)' },
+  { tag: tags.tagName, color: 'var(--color-syntax-tag)' },
+  { tag: tags.attributeName, color: 'var(--color-syntax-attribute)' },
+  { tag: [tags.punctuation, tags.bracket], color: 'var(--color-syntax-punctuation)' },
+]);
+
 const editorTheme = EditorView.theme({
   '&': {
     height: '100%',
@@ -145,6 +165,7 @@ export function EditorPane({ value, onChange, onRun, onSave }: EditorPaneProps) 
         ]),
         javascript(),
         javascriptLanguage.data.of({ autocomplete: completeFromList(GLC_COMPLETIONS) }),
+        syntaxHighlighting(syntaxHighlightStyle),
         editorTheme,
         readOnlyCompartment.current.of([]),
         EditorView.updateListener.of((update) => {
