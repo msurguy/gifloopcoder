@@ -30,12 +30,12 @@ test.describe('playground', () => {
     expect(nonWhite).toBeGreaterThan(100);
   });
 
-  test('examples gallery lists all 20 examples and loads one', async ({ page }) => {
+  test('examples gallery lists all 25 examples and loads one', async ({ page }) => {
     await page.goto('./');
     await waitForCanvas(page);
     await page.getByRole('button', { name: 'Examples' }).click();
     const cards = page.getByRole('dialog').locator('[aria-label^="Load example:"]');
-    await expect(cards).toHaveCount(20);
+    await expect(cards).toHaveCount(25);
     // ClickableCard's aria button is a hidden overlay; click the card surface
     // like a user would.
     await page

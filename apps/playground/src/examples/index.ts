@@ -1,15 +1,19 @@
-// The 20 original GLC example sketches, imported as raw source.
+// GLC example sketches, imported as raw source.
 
 import allshapes from './sketches/allshapes.js?raw';
 import arcSegments from './sketches/arcSegments.js?raw';
 import bezierSegments from './sketches/bezierSegments.js?raw';
 import circles from './sketches/circles.js?raw';
 import cube from './sketches/cube.js?raw';
+import emojiBounce from './sketches/emojiBounce.js?raw';
+import emojiOrbit from './sketches/emojiOrbit.js?raw';
 import funcs from './sketches/funcs.js?raw';
 import gears from './sketches/gears.js?raw';
 import grid from './sketches/grid.js?raw';
 import gridlayout from './sketches/gridlayout.js?raw';
 import hearts from './sketches/hearts.js?raw';
+import kineticTitle from './sketches/kineticTitle.js?raw';
+import letterWave from './sketches/letterWave.js?raw';
 import phase from './sketches/phase.js?raw';
 import poly from './sketches/poly.js?raw';
 import rays from './sketches/rays.js?raw';
@@ -20,6 +24,7 @@ import single from './sketches/single.js?raw';
 import single2 from './sketches/single2.js?raw';
 import spiral from './sketches/spiral.js?raw';
 import spiral2 from './sketches/spiral2.js?raw';
+import typewriter from './sketches/typewriter.js?raw';
 
 export interface Example {
   id: string;
@@ -59,6 +64,26 @@ export const EXAMPLES: Example[] = [
   { id: 'single', title: 'Single Mode', description: 'One-way (non-bouncing) animation', code: single },
   { id: 'single2', title: 'Single Mode II', description: 'More one-way animation', code: single2 },
   { id: 'allshapes', title: 'All Shapes', description: 'A sampler of many shape types', code: allshapes },
+  { id: 'typewriter', title: 'Typewriter', description: 'Text that types itself out, then resets', code: typewriter },
+  {
+    id: 'letterWave',
+    title: 'Letter Wave',
+    description: 'Each letter bounces in a staggered traveling wave',
+    code: letterWave,
+  },
+  {
+    id: 'kineticTitle',
+    title: 'Kinetic Title',
+    description: 'A title pulsing in size and rotation while cycling hue',
+    code: kineticTitle,
+  },
+  { id: 'emojiOrbit', title: 'Emoji Orbit', description: 'Emoji orbiting a center point', code: emojiOrbit },
+  {
+    id: 'emojiBounce',
+    title: 'Emoji Bounce',
+    description: 'A row of emoji staggered in a scale and bounce pulse',
+    code: emojiBounce,
+  },
 ];
 
 export function getExample(id: string): Example | undefined {

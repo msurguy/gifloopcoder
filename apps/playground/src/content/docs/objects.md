@@ -420,10 +420,29 @@ fontSize (20)               The size of the font, in pixels.
 fontWeight ("normal")       The weight of the font (normal, bold, etc).
 fontFamily ("sans-serif")   The font family.
 fontStyle ("normal")        The style of the font (normal, italic, etc).
+textAlign ("center")        Horizontal alignment: "left", "center", "right", "start", "end".
+textBaseline ("middle")     Vertical alignment: "top", "middle", "alphabetic", "bottom", etc.
+letterSpacing (0)           Extra space between characters, in pixels.
 rotation (0)                The rotation of the text. (degrees).
 stroke (false)              Whether the object will be stroked.
 fill (true)                 Whether the object will be filled.
 ```
+
+A left-aligned label that won't re-center itself as the string grows (handy for
+typewriter-style reveals):
+
+```js
+glc.renderList.addText({
+    x: 20,
+    y: 50,
+    textAlign: "left",
+    text: "growing..."
+});
+```
+
+Emoji are just Unicode characters, so they render with `addText` the same way
+regular text does — no special API needed. See [Text & Emoji](#/docs/text-emoji)
+for animation patterns and emoji-specific caveats.
 
 ## Segment Objects
 

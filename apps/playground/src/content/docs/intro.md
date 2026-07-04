@@ -2,7 +2,7 @@
 
 I highly recommend you read through this first section to get an idea of how the program works and how to code objects and animations.
 
-Then you can use the [Objects](#/docs/objects), [Styles](#/docs/styles), [Property Types](#/docs/properties), [Exporting](#/docs/export) and [Tips](#/docs/tips) sections as a reference as needed.
+Then you can use the [Objects](#/docs/objects), [Styles](#/docs/styles), [Property Types](#/docs/properties), [Text & Emoji](#/docs/text-emoji), [Exporting](#/docs/export) and [Tips](#/docs/tips) sections as a reference as needed.
 
 ## Getting Started
 

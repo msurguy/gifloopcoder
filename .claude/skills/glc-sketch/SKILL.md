@@ -100,7 +100,7 @@ Angles are degrees. Each method takes one props object; all props optional.
 | `addGear` | x, y, radius 50, teeth 10, toothHeight 10, toothAngle 0.3, hub 10, rotation | fill |
 | `addArrow` | x, y, w 100, h 100, pointPercent 0.5, shaftPercent 0.5, rotation | fill |
 | `addCube` | x, y, z 0, size 100, rotationX/Y/Z 0 | stroke (wireframe 3D) |
-| `addText` | x, y, text "hello", fontSize 20, fontFamily "sans-serif", fontWeight, fontStyle, rotation | fill |
+| `addText` | x, y, text "hello", fontSize 20, fontFamily "sans-serif", fontWeight, fontStyle, textAlign "center", textBaseline "middle", letterSpacing 0, rotation | fill |
 | `addLine` | x0 0, y0 0, x1 100, y1 100 | stroke |
 | `addRay` | x, y, angle 0, length 100 | stroke |
 | `addGrid` | x 0, y 0, w 100, h 100, gridSize 20 | stroke |
@@ -184,6 +184,33 @@ function onGLC(glc) {
 
 Rotate by `360 / sides` (or a multiple) so the end frame equals the start frame.
 
+**Text & emoji patterns:**
+
+```js
+// Typewriter reveal — text: fn(t) slicing a string, textAlign: 'left' keeps
+// the anchor fixed while the string grows (default 'center' would re-center
+// every frame). Use single mode so it doesn't "un-type" on the way back.
+list.addText({
+    x: 20, y: 100, textAlign: "left",
+    text: function(t) { return "hello world".slice(0, Math.round(t * 11)); }
+});
+
+// Per-letter stagger — one addText per character, phase offsets each letter's
+// timeline. Position letters yourself (no auto-layout across separate calls).
+var word = "WAVY", letterWidth = 45, startX = width / 2 - (word.length - 1) * letterWidth / 2;
+for (var i = 0; i < word.length; i++) {
+    list.addText({
+        x: startX + i * letterWidth, y: [height / 2 + 30, height / 2 - 30],
+        text: word[i], textAlign: "center", phase: i / word.length
+    });
+}
+```
+
+Emoji are just Unicode text — pass them straight through the `text` prop, no special
+handling needed. Color emoji glyphs ignore `fillStyle` and look broken with
+`stroke: true`; animate them via position/rotation/fontSize/globalAlpha instead, and
+leave `stroke` at its default (`false`).
+
 ## Pitfalls
 
 - Sketch never calls `glc.loop()` or `glc.playOnce()` → static frame. Almost always call
@@ -198,6 +225,8 @@ Rotate by `360 / sides` (or a multiple) so the end frame equals the start frame.
 - Transparent GIFs: set `glc.styles.backgroundColor = "transparent"` AND enable the
   transparency option on export.
 - `drawFromCenter` defaults differ: true for rect, false for circle/oval.
+- Don't hand-roll text centering by offsetting `x`/`y` — `addText` has native `textAlign`/
+  `textBaseline` props for this.
 
-More context: docs pages in `apps/playground/src/content/docs/` and 20 runnable examples in
+More context: docs pages in `apps/playground/src/content/docs/` and runnable examples in
 `apps/playground/src/examples/sketches/`.

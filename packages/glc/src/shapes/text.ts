@@ -9,9 +9,14 @@ export const text: ShapeType = {
     const fontWeight = this.getString('fontWeight', t, 'normal');
     const fontFamily = this.getString('fontFamily', t, 'sans-serif');
     const fontStyle = this.getString('fontStyle', t, 'normal');
+    const textAlign = this.getString<CanvasTextAlign>('textAlign', t, 'center');
+    const textBaseline = this.getString<CanvasTextBaseline>('textBaseline', t, 'middle');
+    const letterSpacing = this.getNumber('letterSpacing', t, 0);
 
     context.font = fontWeight + ' ' + fontStyle + ' ' + fontSize + 'px ' + fontFamily;
-    const width = context.measureText(str).width;
+    context.textAlign = textAlign;
+    context.textBaseline = textBaseline;
+    context.letterSpacing = letterSpacing + 'px';
     context.translate(x, y);
     context.rotate((this.getNumber('rotation', t, 0) * Math.PI) / 180);
     let shadowsSet = false;
@@ -19,14 +24,14 @@ export const text: ShapeType = {
     if (this.getBool('fill', t, true)) {
       this.setShadowParams(context, t);
       shadowsSet = true;
-      context.fillText(str, -width / 2, fontSize * 0.4);
+      context.fillText(str, 0, 0);
     }
     context.restore();
     if (this.getBool('stroke', t, false)) {
       if (!shadowsSet) {
         this.setShadowParams(context, t);
       }
-      context.strokeText(str, -width / 2, fontSize * 0.4);
+      context.strokeText(str, 0, 0);
     }
   },
 };
