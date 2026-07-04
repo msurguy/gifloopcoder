@@ -72,12 +72,12 @@ export function App() {
     state.clearConsole();
     state.setRunError(null);
     const sandbox = sandboxRef.current;
-    if (!sandbox) return;
+    if (!sandbox) return undefined;
     const result = await sandbox.run(runCode, runSettings, 'loop');
     if (!result.ok) {
       useStore.getState().setRunError(result.error ?? 'Unknown error');
       useStore.getState().setPlaying(false);
-      return;
+      return result;
     }
     if (result.settings) {
       // Reflect settings the sketch itself changed (glc.setDuration etc.).
@@ -92,6 +92,29 @@ export function App() {
           supportProbedRef.current = false;
         });
     }
+    return result;
+  }, []);
+
+  // Width/height are commonly captured as plain locals at the top of onGLC,
+  // so a pure live-resize leaves layout math stale. Re-run the sketch after a
+  // pause in dragging/typing, then restore playback position so it doesn't
+  // feel like the preview jumped back to the start.
+  const resizeRerunTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reRunPreservingPlayback = useCallback(async () => {
+    const state = useStore.getState();
+    const wasPlaying = state.playing;
+    const resumeT = state.t;
+    const result = await runSketch();
+    const sandbox = sandboxRef.current;
+    if (!sandbox || !result?.ok) return;
+    if (resumeT > 0) sandbox.seek(resumeT);
+    if (wasPlaying) sandbox.play('loop');
+  }, [runSketch]);
+
+  useEffect(() => {
+    return () => {
+      if (resizeRerunTimerRef.current) clearTimeout(resizeRerunTimerRef.current);
+    };
   }, []);
 
   const loadAndRun = useCallback(
@@ -166,19 +189,34 @@ export function App() {
     useStore.getState().pushConsole(level, text);
   }, []);
 
-  const handleSettingsChange = useCallback((patch: Partial<SketchSettings>) => {
-    useStore.getState().setSettings(patch);
-    const sandbox = sandboxRef.current;
-    if (!sandbox) return;
-    for (const [key, value] of Object.entries(patch)) {
-      if (key === 'w' || key === 'h') {
+  const handleSettingsChange = useCallback(
+    (patch: Partial<SketchSettings>) => {
+      useStore.getState().setSettings(patch);
+      const sandbox = sandboxRef.current;
+      if (!sandbox) return;
+      let resized = false;
+      for (const [key, value] of Object.entries(patch)) {
+        if (key === 'w' || key === 'h') {
+          resized = true;
+        } else {
+          sandbox.setParam(key as 'fps' | 'duration' | 'mode' | 'easing' | 'maxColors', value as never);
+        }
+      }
+      if (resized) {
+        // Instant visual feedback while dragging/typing...
         const s = useStore.getState().settings;
         sandbox.resize(s.w, s.h);
-      } else {
-        sandbox.setParam(key as 'fps' | 'duration' | 'mode' | 'easing' | 'maxColors', value as never);
+        // ...then settle on a real re-run so layout code depending on
+        // width/height reflows correctly.
+        if (resizeRerunTimerRef.current) clearTimeout(resizeRerunTimerRef.current);
+        resizeRerunTimerRef.current = setTimeout(() => {
+          resizeRerunTimerRef.current = null;
+          void reRunPreservingPlayback();
+        }, 400);
       }
-    }
-  }, []);
+    },
+    [reRunPreservingPlayback]
+  );
 
   const handleSave = useCallback(
     (name?: string) => {

@@ -186,7 +186,10 @@ function onMessage(event: MessageEvent<HostMessage>): void {
       }
       break;
     case 'pause':
-      glc?.pause();
+      if (glc) {
+        glc.pause();
+        post({ type: 'frame', t: glc.getT(), running: false });
+      }
       break;
     case 'stop':
       if (glc) {
