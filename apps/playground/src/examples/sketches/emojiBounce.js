@@ -17,3 +17,15 @@ function onGLC(glc) {
         });
     }
 }
+
+// ─ Settings & effects: managed by the panels ─
+// (edits below are overwritten by the panels)
+function onGLCPanel(glc) {
+  glc.size(400, 400);
+  glc.setFPS(30);
+  glc.setDuration(2);
+  glc.setMode("bounce");
+  glc.setEasing(true);
+  glc.setMaxColors(256);
+}
+// ─ end managed block ─

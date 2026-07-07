@@ -36,6 +36,35 @@ export {
 export { exportPng, exportPngSequence } from './export/png.js';
 export { detectExportSupport, type ExportSupport } from './export/capabilities.js';
 
+export {
+  createEffects,
+  builtinPasses,
+  EffectComposer,
+  effectMeta,
+  EFFECT_CATEGORIES,
+  defaultEffectOptions,
+  colorMatrixPresets,
+  type Effects,
+  type EffectsHost,
+  type EffectConfig,
+  type EffectOptionValue,
+  type EffectMeta,
+  type EffectParamMeta,
+  type EffectCategory,
+  type BuiltinEffectName,
+  type BuiltinEffectOptions,
+  type Pass,
+  type PassContext,
+  type ScalarParam,
+  type ColorParam,
+  type UniformValue,
+  type ShaderPassOptions,
+  type BloomOptions,
+  type ChromaticAberrationOptions,
+  type VignetteOptions,
+  type FilmGrainOptions,
+} from './effects/index.js';
+
 // Default export kept for drop-in compatibility with the old UMD bundle usage:
 //   var glc = new GLC(document.getElementById('sketch'));
 export { GLC as default } from './glc.js';

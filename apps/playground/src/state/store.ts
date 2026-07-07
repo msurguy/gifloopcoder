@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import type { ExportSupportInfo, SketchSettings } from '../sandbox/protocol';
+import type { EffectConfig, ExportSupportInfo, SketchSettings } from '../sandbox/protocol';
 import { DEFAULT_SETTINGS } from '../sandbox/protocol';
 import { DEFAULT_SKETCH } from '../examples';
+import { DEFAULT_EFFECTS } from './effects';
 
 export interface ConsoleEntry {
   id: number;
@@ -32,8 +33,11 @@ interface PlaygroundState {
   support: ExportSupportInfo | null;
   exportJob: ExportJob | null;
 
+  effects: EffectConfig[];
+
   setCode(code: string): void;
   setSettings(patch: Partial<SketchSettings>): void;
+  setEffects(effects: EffectConfig[]): void;
   loadSketch(code: string, settings?: Partial<SketchSettings>, title?: string, projectId?: string): void;
   setPlaying(playing: boolean): void;
   setT(t: number): void;
@@ -63,8 +67,11 @@ export const useStore = create<PlaygroundState>((set) => ({
   support: null,
   exportJob: null,
 
+  effects: [...DEFAULT_EFFECTS],
+
   setCode: (code) => set({ code, dirty: true }),
   setSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch }, dirty: true })),
+  setEffects: (effects) => set({ effects }),
   loadSketch: (code, settings, title, projectId) =>
     set({
       code,

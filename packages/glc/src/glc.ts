@@ -4,6 +4,7 @@
 
 import { color, type ColorLib } from './color.js';
 import { createRenderList, type RenderList } from './renderList.js';
+import { createEffects, type Effects, type EffectComposer } from './effects/index.js';
 import { createScheduler, type Scheduler } from './scheduler.js';
 import { createDefaultStyles } from './styles.js';
 import type { Interpolation, InterpolationMode, Styles } from './types.js';
@@ -50,6 +51,8 @@ export interface GLC {
   styles: Styles;
   color: ColorLib;
   canvasEl: HTMLCanvasElement;
+  /** WebGL post-processing chain applied to the whole frame (bloom, etc.). */
+  effects: Effects;
 
   size(width: number, height: number): void;
   playOnce(): void;
@@ -129,6 +132,21 @@ export function createGLC(options: GLCOptions = {}): GLC {
     options.container.appendChild(canvasEl);
   }
 
+  // Lazily-created WebGL post-processing. The composer is only built on the
+  // first effect; the renderList hook is registered the moment it exists.
+  let composer: EffectComposer | null = null;
+  const effects = createEffects({
+    getSize: () => ({ width: model.w, height: model.h }),
+    onComposerReady: (c) => {
+      composer = c;
+      renderList.setPostProcessor((ctx, canvas, t) => c.apply(ctx, canvas, t));
+    },
+    // Re-render the current frame when paused so effect changes show immediately.
+    requestRender: () => {
+      if (!scheduler.isRunning()) renderList.render(scheduler.getT());
+    },
+  });
+
   function makeExportSource(): ExportSource {
     return {
       canvas: canvasEl,
@@ -170,11 +188,13 @@ export function createGLC(options: GLCOptions = {}): GLC {
     styles,
     color,
     canvasEl,
+    effects,
 
     size(w: number, h: number) {
       this.w = model.w = w;
       this.h = model.h = h;
       renderList.size(w, h);
+      composer?.resize(w, h);
     },
     playOnce: () => scheduler.playOnce(),
     loop: () => scheduler.loop(),

@@ -8,12 +8,14 @@ import { TabList, Tab } from '@astryxdesign/core/TabList';
 import { Divider } from '@astryxdesign/core/Divider';
 
 import { useStore } from './state/store';
+import { parseEffectsBlock, replacePanelBlock } from './state/effectsCode';
 import { useRoute, navigate } from './router';
 import { SandboxFrame, type SandboxAPI } from './sandbox/SandboxHost';
-import type { ExportFormat, SketchSettings } from './sandbox/protocol';
+import type { EffectConfig, ExportFormat, SketchSettings } from './sandbox/protocol';
 import { EditorPane } from './components/EditorPane';
 import { TransportBar } from './components/TransportBar';
 import { SettingsPanel } from './components/SettingsPanel';
+import { EffectsPanel } from './components/EffectsPanel';
 import { ConsoleDrawer } from './components/ConsoleDrawer';
 import { ExportDialog } from './components/ExportDialog';
 import { ExamplesDialog } from './components/ExamplesDialog';
@@ -24,6 +26,16 @@ import { DocsView } from './components/DocsView';
 import { getExample } from './examples';
 import { decodeShare, shareUrl, type SharePayload } from './share';
 import { loadDraft, saveDraft, saveProject, type Project } from './projects';
+
+// One-time WebGL2 capability check (parent window) — drives the Effects panel's
+// disabled state. The composer also falls back gracefully if this is wrong.
+const WEBGL2_SUPPORTED = (() => {
+  try {
+    return !!document.createElement('canvas').getContext('webgl2');
+  } catch {
+    return false;
+  }
+})();
 
 function LogoMark() {
   return (
@@ -50,6 +62,7 @@ export function App() {
   const consoleEntries = useStore((s) => s.consoleEntries);
   const runError = useStore((s) => s.runError);
   const support = useStore((s) => s.support);
+  const effects = useStore((s) => s.effects);
   const exportJob = useStore((s) => s.exportJob);
   const currentTitle = useStore((s) => s.currentTitle);
 
@@ -65,10 +78,35 @@ export function App() {
   const bootedRef = useRef(false);
   const supportProbedRef = useRef(false);
 
+  // Pending debounced write of panel state (settings + effects) into the
+  // code's managed block.
+  const panelWriteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const writePanelToCode = useCallback(() => {
+    panelWriteTimerRef.current = null;
+    const s = useStore.getState();
+    const next = replacePanelBlock(s.code, s.settings, s.effects);
+    if (next !== s.code) s.setCode(next);
+  }, []);
+  const schedulePanelWrite = useCallback(() => {
+    if (panelWriteTimerRef.current) clearTimeout(panelWriteTimerRef.current);
+    panelWriteTimerRef.current = setTimeout(writePanelToCode, 400);
+  }, [writePanelToCode]);
+
   const runSketch = useCallback(async (codeOverride?: string, settingsOverride?: SketchSettings) => {
+    // Flush any pending panel→code write so the run includes the block.
+    if (panelWriteTimerRef.current) {
+      clearTimeout(panelWriteTimerRef.current);
+      writePanelToCode();
+    }
     const state = useStore.getState();
     const runCode = codeOverride ?? state.code;
     const runSettings = settingsOverride ?? state.settings;
+    // Code is the source of truth for effects: sync the panel from the managed
+    // block (no block → empty panel; unparseable block → leave panel alone).
+    const parsedEffects = parseEffectsBlock(runCode);
+    if (parsedEffects !== null) {
+      state.setEffects(parsedEffects);
+    }
     state.clearConsole();
     state.setRunError(null);
     const sandbox = sandboxRef.current;
@@ -83,6 +121,8 @@ export function App() {
       // Reflect settings the sketch itself changed (glc.setDuration etc.).
       useStore.setState({ settings: result.settings });
     }
+    // No post-run re-apply needed: the panel's chain lives in the managed
+    // onGLCEffects block, which the sandbox executes as part of the sketch.
     if (!supportProbedRef.current) {
       supportProbedRef.current = true;
       sandbox
@@ -192,6 +232,8 @@ export function App() {
   const handleSettingsChange = useCallback(
     (patch: Partial<SketchSettings>) => {
       useStore.getState().setSettings(patch);
+      // Mirror the new settings snapshot into the code's managed block.
+      schedulePanelWrite();
       const sandbox = sandboxRef.current;
       if (!sandbox) return;
       let resized = false;
@@ -215,7 +257,20 @@ export function App() {
         }, 400);
       }
     },
-    [reRunPreservingPlayback]
+    [reRunPreservingPlayback, schedulePanelWrite]
+  );
+
+  const handleEffectsChange = useCallback(
+    (next: EffectConfig[]) => {
+      useStore.getState().setEffects(next);
+      // Ship the chain into the sandbox for immediate feedback. Sending even an
+      // empty list is intentional: it lets the user clear panel effects.
+      sandboxRef.current?.setEffects(next);
+      // Mirror the chain into the code's managed block (debounced so slider
+      // drags don't rewrite the editor on every tick).
+      schedulePanelWrite();
+    },
+    [schedulePanelWrite]
   );
 
   const handleSave = useCallback(
@@ -335,6 +390,9 @@ export function App() {
       <div style={{ padding: 'var(--spacing-3)', overflowY: 'auto', maxHeight: 300 }}>
         <VStack gap={3}>
           <SettingsPanel settings={settings} onChange={handleSettingsChange} />
+          <Divider />
+          <Text type="label">Effects</Text>
+          <EffectsPanel effects={effects} onChange={handleEffectsChange} supported={WEBGL2_SUPPORTED} />
           <Divider />
           <ConsoleDrawer entries={consoleEntries} onClear={() => useStore.getState().clearConsole()} />
         </VStack>

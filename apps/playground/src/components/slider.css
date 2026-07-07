@@ -1,0 +1,16 @@
+/*
+ * Slider value-readout stabilizer.
+ *
+ * Astryx renders `valueDisplay="text"` as a bare <span> that shares the slider's
+ * flex row with the track. Because the span is `flex-shrink: 0` and auto-width,
+ * its box grows/shrinks as the number's character count changes ("78" → "-0.98"),
+ * which resizes the flex-grow track next to it and makes the thumb visibly jump
+ * mid-drag. Reserving a fixed width with tabular figures keeps the track — and
+ * thus the thumb — stationary regardless of the value shown.
+ */
+.astryx-slider > span {
+  display: inline-block;
+  min-width: 3.25rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

@@ -3,6 +3,7 @@ import objects from './objects.md?raw';
 import styles from './styles.md?raw';
 import properties from './properties.md?raw';
 import textEmoji from './text-emoji.md?raw';
+import effects from './effects.md?raw';
 import tips from './tips.md?raw';
 import exporting from './export.md?raw';
 
@@ -18,6 +19,7 @@ export const DOC_PAGES: DocPage[] = [
   { slug: 'styles', title: 'Styles', content: styles },
   { slug: 'properties', title: 'Property Types', content: properties },
   { slug: 'text-emoji', title: 'Text & Emoji', content: textEmoji },
+  { slug: 'effects', title: 'Post-Processing Effects', content: effects },
   { slug: 'export', title: 'Exporting', content: exporting },
   { slug: 'tips', title: 'Tips & Advanced Use', content: tips },
 ];

@@ -1,8 +1,5 @@
 function onGLC(glc) {
     glc.loop();
-    glc.setDuration(3);
-    glc.setMode("single");
-    glc.setEasing(false);
     var list = glc.renderList,
         width = glc.w,
         height = glc.h;
@@ -32,3 +29,15 @@ function onGLC(glc) {
         text: "single mode: type, hold, reset"
     });
 }
+
+// ─ Settings & effects: managed by the panels ─
+// (edits below are overwritten by the panels)
+function onGLCPanel(glc) {
+  glc.size(400, 400);
+  glc.setFPS(30);
+  glc.setDuration(3);
+  glc.setMode("single");
+  glc.setEasing(false);
+  glc.setMaxColors(256);
+}
+// ─ end managed block ─

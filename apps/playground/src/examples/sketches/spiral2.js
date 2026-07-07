@@ -2,9 +2,6 @@ function onGLC(glc) {
     var list = glc.renderList;
 
     glc.loop();
-    glc.size(540, 540);
-    glc.setDuration(3);
-    glc.setFPS(30);
     
     list.addSpiral({
         x: glc.w/2,
@@ -23,4 +20,16 @@ function onGLC(glc) {
 
 
 
-}       
+}
+
+// ─ Settings & effects: managed by the panels ─
+// (edits below are overwritten by the panels)
+function onGLCPanel(glc) {
+  glc.size(540, 540);
+  glc.setFPS(30);
+  glc.setDuration(3);
+  glc.setMode("bounce");
+  glc.setEasing(true);
+  glc.setMaxColors(256);
+}
+// ─ end managed block ─

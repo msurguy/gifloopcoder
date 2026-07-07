@@ -1,8 +1,5 @@
 function onGLC(glc) {
     glc.loop();
-    glc.size(540, 540);
-    glc.setFPS(45);
-    glc.setDuration(3);
     glc.styles.lineWidth = 5;
     glc.styles.backgroundColor = "black";
     
@@ -24,4 +21,16 @@ function onGLC(glc) {
             phase: 1.0/num*i/2
         });
     }
-}       
+}
+
+// ─ Settings & effects: managed by the panels ─
+// (edits below are overwritten by the panels)
+function onGLCPanel(glc) {
+  glc.size(540, 540);
+  glc.setFPS(45);
+  glc.setDuration(3);
+  glc.setMode("bounce");
+  glc.setEasing(true);
+  glc.setMaxColors(256);
+}
+// ─ end managed block ─

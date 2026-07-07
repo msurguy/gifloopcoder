@@ -5,6 +5,7 @@ import { neutralTheme } from '@astryxdesign/theme-neutral';
 
 import '@astryxdesign/core/reset.css';
 import '@astryxdesign/core/astryx.css';
+import './components/slider.css';
 
 import { App } from './App';
 

@@ -3,6 +3,10 @@
 // allow-same-origin), so all messages use targetOrigin '*' and binary results
 // cross the boundary as transferable ArrayBuffers.
 
+import type { EffectConfig } from 'gifloopcoder';
+
+export type { EffectConfig };
+
 export interface SketchSettings {
   fps: number;
   duration: number;
@@ -40,6 +44,7 @@ export type HostMessage =
   | { type: 'stop' }
   | { type: 'seek'; t: number }
   | { type: 'setParam'; key: 'fps' | 'duration' | 'mode' | 'easing' | 'maxColors'; value: number | string | boolean }
+  | { type: 'setEffects'; effects: EffectConfig[] }
   | { type: 'resize'; w: number; h: number }
   | { type: 'export'; id: number; format: ExportFormat; options?: ExportRequestOptions }
   | { type: 'cancelExport' }

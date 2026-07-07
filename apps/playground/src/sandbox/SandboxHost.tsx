@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react';
 import type {
+  EffectConfig,
   ExportFormat,
   ExportRequestOptions,
   ExportSupportInfo,
@@ -39,6 +40,7 @@ export interface SandboxAPI {
   stop(): void;
   seek(t: number): void;
   setParam(key: 'fps' | 'duration' | 'mode' | 'easing' | 'maxColors', value: number | string | boolean): void;
+  setEffects(effects: EffectConfig[]): void;
   resize(w: number, h: number): void;
   exportMedia(
     format: ExportFormat,
@@ -176,6 +178,7 @@ export const SandboxFrame = forwardRef<SandboxAPI, SandboxFrameProps>(function S
       stop: () => post({ type: 'stop' }),
       seek: (t) => post({ type: 'seek', t }),
       setParam: (key, value) => post({ type: 'setParam', key, value }),
+      setEffects: (effects) => post({ type: 'setEffects', effects }),
       resize: (w, h) => post({ type: 'resize', w, h }),
       exportMedia(format, options, onProgress) {
         const id = nextIdRef.current++;

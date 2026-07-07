@@ -1,11 +1,5 @@
 function onGLC(glc) {
     glc.loop();
-    // glc.size(400, 400);
-    // glc.setDuration(5);
-    // glc.setFPS(20);
-    // glc.setMaxColors(256);
-    glc.setMode("single");
-    glc.setEasing(false);
     glc.styles.backgroundColor = "black";
     var list = glc.renderList,
         width = glc.w,
@@ -49,3 +43,15 @@ function onGLC(glc) {
 
 
 }
+
+// ─ Settings & effects: managed by the panels ─
+// (edits below are overwritten by the panels)
+function onGLCPanel(glc) {
+  glc.size(400, 400);
+  glc.setFPS(30);
+  glc.setDuration(2);
+  glc.setMode("single");
+  glc.setEasing(false);
+  glc.setMaxColors(256);
+}
+// ─ end managed block ─

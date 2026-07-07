@@ -2,9 +2,35 @@
 // sketch code, and performs exports locally so the canvas never has to cross
 // the origin boundary — only finished bytes do (as transferable ArrayBuffers).
 
-import { createGLC, detectExportSupport, type GLCInstance } from 'gifloopcoder';
+import {
+  builtinPasses,
+  createGLC,
+  detectExportSupport,
+  type EffectConfig,
+  type GLCInstance,
+} from 'gifloopcoder';
 import type { HostMessage, SandboxMessage, SketchSettings } from './protocol';
 import { extensionForFormat } from './protocol';
+
+// Effects the sketch's own onGLC added (code-owned). Live panel edits replace
+// only the chain tail after this base — the panel's chain lives in the
+// generated onGLCEffects block, which runs right after onGLC.
+let codeOwnedEffectCount = 0;
+
+function applyEffects(instance: GLCInstance, effects: EffectConfig[]): void {
+  // Truncate back to the code-owned base, then append the panel chain.
+  while (instance.effects.count() > codeOwnedEffectCount) {
+    instance.effects.remove(instance.effects.count() - 1);
+  }
+  for (const effect of effects) {
+    if (effect.type === 'shader') {
+      instance.effects.addShader({ fragment: effect.fragment, uniforms: effect.uniforms });
+    } else if (effect.type in builtinPasses) {
+      instance.effects.add(effect.type, effect.options as never);
+    }
+    // Unknown types (future versions / stale shared state) are skipped.
+  }
+}
 
 let glc: GLCInstance | null = null;
 let exportController: AbortController | null = null;
@@ -69,12 +95,19 @@ function run(id: number, code: string, settings: SketchSettings, autoplay: 'loop
   try {
     // The classic GLC sketch contract: the code defines onGLC(glc) and any
     // top-level statements run immediately. `new Function` gives user code its
-    // own scope inside this disposable sandbox realm.
+    // own scope inside this disposable sandbox realm. `onGLCPanel` is the
+    // panels-managed block (settings snapshot + effects; `onGLCEffects` is its
+    // legacy effects-only name); it runs after onGLC so panel values win. The
+    // marker callback between the two records how many effects the sketch
+    // itself owns (see applyEffects).
     const wrapped = new Function(
       'glc',
-      `"use strict";\n${code}\n;if (typeof onGLC === 'function') { onGLC(glc); }`
+      '__afterOnGLC',
+      `"use strict";\n${code}\n;if (typeof onGLC === 'function') { onGLC(glc); }\n__afterOnGLC();\nif (typeof onGLCPanel === 'function') { onGLCPanel(glc); } else if (typeof onGLCEffects === 'function') { onGLCEffects(glc); }`
     );
-    wrapped(glc);
+    wrapped(glc, () => {
+      codeOwnedEffectCount = glc!.effects.count();
+    });
   } catch (err) {
     post({ type: 'runError', id, message: err instanceof Error ? err.message : String(err) });
     return;
@@ -210,6 +243,12 @@ function onMessage(event: MessageEvent<HostMessage>): void {
         else if (msg.key === 'mode') glc.setMode(msg.value as 'bounce' | 'single');
         else if (msg.key === 'easing') glc.setEasing(msg.value as boolean);
         else if (msg.key === 'maxColors') glc.setMaxColors(msg.value as number);
+        if (!glc.isRunning()) glc.renderAt(glc.getT());
+      }
+      break;
+    case 'setEffects':
+      if (glc) {
+        applyEffects(glc, msg.effects);
         if (!glc.isRunning()) glc.renderAt(glc.getT());
       }
       break;

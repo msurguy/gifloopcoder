@@ -2,6 +2,7 @@
 
 import allshapes from './sketches/allshapes.js?raw';
 import arcSegments from './sketches/arcSegments.js?raw';
+import bloomEffect from './sketches/bloomEffect.js?raw';
 import bezierSegments from './sketches/bezierSegments.js?raw';
 import circles from './sketches/circles.js?raw';
 import cube from './sketches/cube.js?raw';
@@ -9,12 +10,16 @@ import emojiBounce from './sketches/emojiBounce.js?raw';
 import emojiOrbit from './sketches/emojiOrbit.js?raw';
 import funcs from './sketches/funcs.js?raw';
 import gears from './sketches/gears.js?raw';
+import glitchCity from './sketches/glitchCity.js?raw';
 import grid from './sketches/grid.js?raw';
 import gridlayout from './sketches/gridlayout.js?raw';
+import halftonePrint from './sketches/halftonePrint.js?raw';
 import hearts from './sketches/hearts.js?raw';
 import kineticTitle from './sketches/kineticTitle.js?raw';
 import letterWave from './sketches/letterWave.js?raw';
+import colorLab from './sketches/colorLab.js?raw';
 import phase from './sketches/phase.js?raw';
+import retroTV from './sketches/retroTV.js?raw';
 import poly from './sketches/poly.js?raw';
 import rays from './sketches/rays.js?raw';
 import rays2 from './sketches/rays2.js?raw';
@@ -25,6 +30,8 @@ import single2 from './sketches/single2.js?raw';
 import spiral from './sketches/spiral.js?raw';
 import spiral2 from './sketches/spiral2.js?raw';
 import typewriter from './sketches/typewriter.js?raw';
+import underwater from './sketches/underwater.js?raw';
+import warpZone from './sketches/warpZone.js?raw';
 
 export interface Example {
   id: string;
@@ -76,6 +83,48 @@ export const EXAMPLES: Example[] = [
     title: 'Kinetic Title',
     description: 'A title pulsing in size and rotation while cycling hue',
     code: kineticTitle,
+  },
+  {
+    id: 'bloomEffect',
+    title: 'Post FX: Bloom',
+    description: 'WebGL bloom, chromatic aberration & a custom GLSL scanline pass',
+    code: bloomEffect,
+  },
+  {
+    id: 'retroTV',
+    title: 'Post FX: Retro TV',
+    description: 'Test-card bars through CRT glass, old film damage & RGB misalignment',
+    code: retroTV,
+  },
+  {
+    id: 'glitchCity',
+    title: 'Post FX: Glitch City',
+    description: 'A neon skyline torn by deterministic glitch bands and grain',
+    code: glitchCity,
+  },
+  {
+    id: 'halftonePrint',
+    title: 'Post FX: Halftone Print',
+    description: 'Comic-print halftone dots over a black & white color matrix',
+    code: halftonePrint,
+  },
+  {
+    id: 'underwater',
+    title: 'Post FX: Underwater',
+    description: 'God rays, wavy reflection and a blue grade over a fishy scene',
+    code: underwater,
+  },
+  {
+    id: 'warpZone',
+    title: 'Post FX: Warp Zone',
+    description: 'Animated twist, zoom blur and a rolling shockwave',
+    code: warpZone,
+  },
+  {
+    id: 'colorLab',
+    title: 'Post FX: Color Lab',
+    description: 'Seamless 360° hue spin through a vintage color matrix',
+    code: colorLab,
   },
   { id: 'emojiOrbit', title: 'Emoji Orbit', description: 'Emoji orbiting a center point', code: emojiOrbit },
   {

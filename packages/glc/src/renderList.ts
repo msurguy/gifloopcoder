@@ -7,6 +7,10 @@ export type ShapeAddMethods = {
   [K in keyof typeof shapeTypes as `add${Capitalize<K & string>}`]: (props?: ShapeProps) => void;
 };
 
+/** A post-process hook run after all shapes draw; receives the 2D context, its
+ * canvas, and the current t. Used to plug in the WebGL effects composer. */
+export type PostProcessor = (context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, t: number) => void;
+
 export interface RenderListBase {
   init(w: number, h: number, styles: Styles, interpolation: Interpolation): void;
   size(w: number, h: number): void;
@@ -15,6 +19,8 @@ export interface RenderListBase {
   addShape(type: ShapeType, props?: ShapeProps): void;
   clear(): void;
   render(t: number): void;
+  /** Register (or clear with null) a post-processing step run at the end of render(). */
+  setPostProcessor(fn: PostProcessor | null): void;
 }
 
 export type RenderList = RenderListBase & ShapeAddMethods;
@@ -27,6 +33,7 @@ export function createRenderList(existingCanvas?: HTMLCanvasElement): RenderList
   const list: Shape[] = [];
   let styles: Styles | null = null;
   let interpolation: Interpolation | null = null;
+  let postProcessor: PostProcessor | null = null;
 
   function init(w: number, h: number, stylesValue: Styles, interpolationValue: Interpolation): void {
     if (!canvas) {
@@ -65,6 +72,15 @@ export function createRenderList(existingCanvas?: HTMLCanvasElement): RenderList
     for (let i = 0; i < list.length; i++) {
       list[i].render(context, t);
     }
+    // Post-processing runs after all shapes so it can operate on the whole
+    // frame; when no processor is set this path is skipped entirely.
+    if (postProcessor) {
+      postProcessor(context, canvas!, t);
+    }
+  }
+
+  function setPostProcessor(fn: PostProcessor | null): void {
+    postProcessor = fn;
   }
 
   const renderList = {
@@ -75,6 +91,7 @@ export function createRenderList(existingCanvas?: HTMLCanvasElement): RenderList
     addShape,
     clear,
     render,
+    setPostProcessor,
   } as RenderList;
 
   // Generate addCircle, addRect, ... from the shape registry.

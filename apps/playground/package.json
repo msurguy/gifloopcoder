@@ -10,7 +10,8 @@
     "build:sandbox": "vite build --config vite.sandbox.config.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "gen:effect-shots": "npm --prefix ../../packages/glc run build && node scripts/generate-effect-screenshots.mjs"
   },
   "dependencies": {
     "@astryxdesign/core": "0.1.2",
