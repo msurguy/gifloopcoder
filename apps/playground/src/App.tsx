@@ -6,6 +6,8 @@ import { Text } from '@astryxdesign/core/Text';
 import { Banner } from '@astryxdesign/core/Banner';
 import { TabList, Tab } from '@astryxdesign/core/TabList';
 import { Divider } from '@astryxdesign/core/Divider';
+import { DropdownMenu, type DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { useMediaQuery } from '@astryxdesign/core/hooks';
 
 import { useStore } from './state/store';
 import { parseEffectsBlock, replacePanelBlock } from './state/effectsCode';
@@ -355,7 +357,39 @@ export function App() {
   }, []);
 
   const isDocs = route.name === 'docs';
-  const isNarrow = typeof window !== 'undefined' && window.innerWidth < 800;
+  const isNarrow = useMediaQuery('(max-width: 800px)');
+
+  // Secondary header actions — single source of truth shared by the desktop
+  // button row and the mobile overflow menu so the two never drift. `group`
+  // separates navigation-ish actions from export-ish ones (a divider is drawn
+  // between groups in the dropdown).
+  const openShare = () => {
+    const state = useStore.getState();
+    const url = shareUrl(state.code, state.settings, state.currentTitle);
+    setShareLink(url);
+    setShareOpen(true);
+  };
+  const headerActions: Array<{
+    label: string;
+    onClick: () => void;
+    variant: 'ghost' | 'secondary';
+    group: 'nav' | 'export';
+  }> = [
+    { label: 'Examples', onClick: () => setExamplesOpen(true), variant: 'ghost', group: 'nav' },
+    { label: 'Docs', onClick: () => navigate('/docs/intro'), variant: 'ghost', group: 'nav' },
+    { label: 'Projects', onClick: () => setProjectsOpen(true), variant: 'ghost', group: 'nav' },
+    { label: 'Import', onClick: handleImportFile, variant: 'ghost', group: 'export' },
+    { label: 'Export .js', onClick: handleExportFile, variant: 'ghost', group: 'export' },
+    { label: 'Share', onClick: openShare, variant: 'secondary', group: 'export' },
+    { label: 'Export media', onClick: () => setExportOpen(true), variant: 'secondary', group: 'export' },
+  ];
+  const headerMenuItems: DropdownMenuOption[] = [];
+  headerActions.forEach((action, i) => {
+    if (i > 0 && action.group !== headerActions[i - 1].group) {
+      headerMenuItems.push({ type: 'divider' });
+    }
+    headerMenuItems.push({ label: action.label, onClick: action.onClick });
+  });
 
   const previewColumn = (
     <VStack gap={0} style={{ height: '100%', minHeight: 0 }}>
@@ -387,7 +421,7 @@ export function App() {
         />
       </div>
       <Divider />
-      <div style={{ padding: 'var(--spacing-3)', overflowY: 'auto', maxHeight: 300 }}>
+      <div style={{ padding: 'var(--spacing-3)', overflowY: 'auto', maxHeight: isNarrow ? '45vh' : 300 }}>
         <VStack gap={3}>
           <SettingsPanel settings={settings} onChange={handleSettingsChange} />
           <Divider />
@@ -418,37 +452,35 @@ export function App() {
     <Layout
       header={
         <LayoutHeader hasDivider>
-          <HStack gap={3} vAlign="center" justify="between" style={{ width: '100%' }}>
-            <HStack gap={2} vAlign="center">
+          <HStack gap={3} vAlign="center" justify="between" style={{ width: '100%', flexWrap: 'wrap' }}>
+            <HStack gap={2} vAlign="center" style={{ minWidth: 0 }}>
               <a href="#/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
                 <LogoMark />
                 <Text type="label" weight="bold">
                   GIF L∞P Coder
                 </Text>
               </a>
-              <Text type="supporting" color="secondary" maxLines={1}>
-                {currentTitle}
-              </Text>
+              {!isNarrow && (
+                <Text type="supporting" color="secondary" maxLines={1}>
+                  {currentTitle}
+                </Text>
+              )}
             </HStack>
             <HStack gap={1} vAlign="center">
               <Button label="Run" variant="primary" size="sm" tooltip="Run sketch (Ctrl/Cmd+Enter)" onClick={() => void runSketch()} />
-              <Button label="Examples" variant="ghost" size="sm" onClick={() => setExamplesOpen(true)} />
-              <Button label="Docs" variant="ghost" size="sm" onClick={() => navigate('/docs/intro')} />
-              <Button label="Projects" variant="ghost" size="sm" onClick={() => setProjectsOpen(true)} />
-              <Button label="Import" variant="ghost" size="sm" onClick={handleImportFile} />
-              <Button label="Export .js" variant="ghost" size="sm" onClick={handleExportFile} />
-              <Button
-                label="Share"
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  const state = useStore.getState();
-                  const url = shareUrl(state.code, state.settings, state.currentTitle);
-                  setShareLink(url);
-                  setShareOpen(true);
-                }}
-              />
-              <Button label="Export media" variant="secondary" size="sm" onClick={() => setExportOpen(true)} />
+              {isNarrow ? (
+                <DropdownMenu button={{ label: 'Menu', variant: 'ghost', size: 'sm' }} items={headerMenuItems} />
+              ) : (
+                headerActions.map((action) => (
+                  <Button
+                    key={action.label}
+                    label={action.label}
+                    variant={action.variant}
+                    size="sm"
+                    onClick={action.onClick}
+                  />
+                ))
+              )}
             </HStack>
           </HStack>
         </LayoutHeader>

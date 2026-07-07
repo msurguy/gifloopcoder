@@ -4,6 +4,8 @@
 import { Layout, LayoutContent, LayoutPanel, VStack } from '@astryxdesign/core/Layout';
 import { Markdown } from '@astryxdesign/core/Markdown';
 import { Text } from '@astryxdesign/core/Text';
+import { DropdownMenu, type DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { useMediaQuery } from '@astryxdesign/core/hooks';
 import { DOC_PAGES } from '../content/docs';
 import { navigate } from '../router';
 
@@ -13,6 +15,46 @@ export interface DocsViewProps {
 
 export function DocsView({ slug }: DocsViewProps) {
   const page = DOC_PAGES.find((p) => p.slug === slug) ?? DOC_PAGES[0];
+  const isNarrow = useMediaQuery('(max-width: 800px)');
+
+  const handleLinkClick = (href: string) => {
+    if (href.startsWith('#/')) {
+      navigate(href.slice(1));
+      return false;
+    }
+    return undefined as unknown as false;
+  };
+
+  const markdown = (
+    <div style={{ maxWidth: 860 }} data-testid="docs-content">
+      <Markdown headingLevelStart={1} contentWidth={760} onLinkClick={handleLinkClick}>
+        {page.content}
+      </Markdown>
+    </div>
+  );
+
+  // On narrow screens the fixed side nav squeezes the docs body, so collapse
+  // page navigation into a dropdown above the content.
+  if (isNarrow) {
+    const navItems: DropdownMenuOption[] = DOC_PAGES.map((p) => ({
+      label: p.title,
+      onClick: () => navigate(`/docs/${p.slug}`),
+    }));
+    return (
+      <Layout
+        content={
+          <LayoutContent role="main">
+            <VStack gap={3} style={{ padding: 'var(--spacing-3)' }}>
+              <div role="navigation">
+                <DropdownMenu button={{ label: page.title, variant: 'secondary', size: 'sm' }} items={navItems} />
+              </div>
+              {markdown}
+            </VStack>
+          </LayoutContent>
+        }
+      />
+    );
+  }
 
   return (
     <Layout
@@ -47,21 +89,7 @@ export function DocsView({ slug }: DocsViewProps) {
       }
       content={
         <LayoutContent role="main">
-          <div style={{ padding: 'var(--spacing-4)', maxWidth: 860 }} data-testid="docs-content">
-            <Markdown
-              headingLevelStart={1}
-              contentWidth={760}
-              onLinkClick={(href) => {
-                if (href.startsWith('#/')) {
-                  navigate(href.slice(1));
-                  return false;
-                }
-                return undefined as unknown as false;
-              }}
-            >
-              {page.content}
-            </Markdown>
-          </div>
+          <div style={{ padding: 'var(--spacing-4)' }}>{markdown}</div>
         </LayoutContent>
       }
     />
