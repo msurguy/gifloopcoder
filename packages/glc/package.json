@@ -20,7 +20,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepack": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "client-zip": "2.5.0",
